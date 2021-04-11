@@ -5,16 +5,22 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 
 
 public class GameView extends View {
+    private static int GET_READY = 1;
+    private static int PLAYING = 2;
+    private static int GAME_OVER = 3;
     private Paint score;
     private Paint lives;
     private Paint life;
-    private int scoreNum;
+    private Paint [] deaths;
+
+    private int scoreNum, strikes;
     private int height,width;
     private BrickCollection bricks;
     private Ball ball;
@@ -25,6 +31,7 @@ public class GameView extends View {
     public GameView(Context context,AttributeSet attrs) {
         super(context, attrs);
         scoreNum=0;
+        strikes=0;
         score = new Paint();
         score.setColor(Color.GREEN);
         score.setTextSize(75);
@@ -37,6 +44,13 @@ public class GameView extends View {
         // TODO: fill the life with white color when the player have the life and remove white and put שקוף if the player loss the life he had
         life = new Paint();
         life.setColor(Color.GREEN);
+
+        deaths = new Paint[3];
+        for (int i=0; i<3; i++) {
+            deaths[i] = new Paint();
+            deaths[i].setColor(Color.WHITE);
+        }
+
 
         startGame = new Paint();
         startGame.setColor(Color.GREEN);
@@ -57,6 +71,13 @@ public class GameView extends View {
         canvas.drawCircle(getWidth() - 110,80,30,life);
         canvas.drawCircle(getWidth() - 180,80,30,life);
 
+        // Fill the lives remaining with white
+        for (int i=0; i<deaths.length; i++) {
+            canvas.drawCircle(getWidth() - 180 + 70*i,80,25,deaths[i]);
+            if(i<(this.deaths.length - this.strikes))
+                this.deaths[i].setColor(Color.parseColor("#434343"));
+        }
+
         // draw the bricks collection
         this.bricks.draw(canvas);
 
@@ -76,7 +97,6 @@ public class GameView extends View {
 
         this.height = getHeight();
         this.width = getWidth();
-
 
         this.bricks = new BrickCollection(this.width,this.height);
         this.brickWidth =  this.bricks.getBrickWidth();
@@ -102,6 +122,9 @@ public class GameView extends View {
         }
 
         return true;
+    }
+
+
     }
 
 
