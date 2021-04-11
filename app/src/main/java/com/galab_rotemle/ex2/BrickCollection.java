@@ -1,6 +1,7 @@
 package com.galab_rotemle.ex2;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 import java.util.Random;
 
@@ -19,12 +20,12 @@ public class BrickCollection {
     public BrickCollection(float width,float height){
         this.height = height;
         this.width = width;
-        this.rows = (int)(Math.random()*(MAX_ROWS+1-MIN_ROWS))+MIN_ROWS;
-        this.columns = (int)(Math.random()*(MAX_COLUMNS+1-MIN_COLUMNS))+MAX_COLUMNS;
+        this.columns = (int)(Math.random()*(MAX_ROWS+1-MIN_ROWS))+MIN_ROWS;
+        this.rows = (int)(Math.random()*(MAX_COLUMNS+1-MIN_COLUMNS))+MIN_COLUMNS;
         this.bricks = new Brick[this.rows][this.columns];
     }
     public void draw(Canvas canvas){
-        float x1=0,x2=5,y1=0,y2=0;
+            float x1=0,x2=5,y1=0,y2=0;
 
         for(int i=0;i<this.rows;i++){
             x1 = x2 + 10;
