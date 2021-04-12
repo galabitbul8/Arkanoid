@@ -21,6 +21,7 @@ public class GameView extends View {
     private Paint lives;
     private Paint life,lifeIn,lifeOut;
     private Paint [] deaths;
+    private Thread ballThread;
 
     private int scoreNum,lifesNumber, state;
 
@@ -29,7 +30,7 @@ public class GameView extends View {
     private BrickCollection bricks;
     private Ball ball;
     private Paddle paddle;
-    private boolean toched;
+    private boolean toched, isRun;
     private float brickWidth,brickHeight;
     private Paint startGame, finishGame;
     private Thread thread;
@@ -99,30 +100,6 @@ public class GameView extends View {
                 this.deaths[i].setColor(Color.parseColor("#434343"));
         }
 
-//        switch (lifesNumber){
-//            case 0:
-//                canvas.drawCircle(getWidth() - 40,80,25,lifeOut);
-//                canvas.drawCircle(getWidth() - 110,80,25,lifeOut);
-//                canvas.drawCircle(getWidth() - 180,80,25,lifeOut);
-//                break;
-//            case 1:
-//                canvas.drawCircle(getWidth() - 40,80,25,lifeIn);
-//                canvas.drawCircle(getWidth() - 110,80,25,lifeOut);
-//                canvas.drawCircle(getWidth() - 180,80,25,lifeOut);
-//                break;
-//            case 2:
-//                canvas.drawCircle(getWidth() - 40,80,25,lifeIn);
-//                canvas.drawCircle(getWidth() - 110,80,25,lifeIn);
-//                canvas.drawCircle(getWidth() - 180,80,25,lifeOut);
-//                break;
-//            case 3:
-//                canvas.drawCircle(getWidth() - 40,80,25,lifeIn);
-//                canvas.drawCircle(getWidth() - 110,80,25,lifeIn);
-//                canvas.drawCircle(getWidth() - 180,80,25,lifeIn);
-//                break;
-//        }
-
-
         // draw the bricks collection
         this.bricks.draw(canvas);
 
@@ -146,6 +123,7 @@ public class GameView extends View {
         if(state == PLAYING)
             if(toched){
                 this.paddle.movePaddle(tempX,this.width);
+                invalidate();
             }
 
     }
@@ -186,6 +164,7 @@ public class GameView extends View {
             case MotionEvent.ACTION_UP:
                 if(state == PLAYING)
                     this.toched = false;
+                Log.d("myLog", "onTouchEvent UP: ");
                 break;
         }
 
@@ -193,10 +172,41 @@ public class GameView extends View {
         return true;
     }
 
+    public void startBallMovement()
+    {
+        isRun = true;
+        ballThread = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                while(isRun)
+                {
+                    // update Hands
+
+//                    moveBall();
+
+                    // call to onDraw() from Thread
+                    postInvalidate();
+
+                }
+            }
+        });
+        ballThread.start();
+    }
+
+    public void stopBall()
+    {
+        isRun = false;
+    }
+    public void moveBall(int w, int h)
+    {
 
     }
 
 
-}
+    }
+
+
 
 
