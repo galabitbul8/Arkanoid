@@ -54,4 +54,19 @@ public class Paddle {
     public void setX2(float x2) {
         this.x2 = x2;
     }
+
+    public void movePaddle(float x,float width){
+        if(x>=width/2){
+            if(x2<width) {
+                this.x1 += 10;
+                this.x2 += 10;
+            }
+        }else{
+            if(x1>0){
+                this.x1 -= 10;
+                this.x2 -= 10;
+            }
+
+        }
+    }
 }
