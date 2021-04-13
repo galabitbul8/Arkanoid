@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -98,6 +99,8 @@ public class GameView extends View {
             canvas.drawCircle(getWidth() - 180 + 70*i,80,25,deaths[i]);
             if(i<(this.deaths.length - this.lifesNumber))
                 this.deaths[i].setColor(Color.parseColor("#434343"));
+            else
+                this.deaths[i].setColor(Color.parseColor("#ffffff"));
         }
 
         // draw the bricks collection
@@ -150,10 +153,16 @@ public class GameView extends View {
         this.tempX = event.getX();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                if(state == GET_READY)
+                if(state == GET_READY){
+                    startBallMovement();
                     state = PLAYING;
+                }
                 if(state == PLAYING)
                     this.toched = true;
+                if(state == GAME_OVER) {
+                    state = GET_READY;
+                    prepareNewGame();
+                }
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -183,9 +192,8 @@ public class GameView extends View {
                 while(isRun)
                 {
                     // update Hands
-
-//                    moveBall();
-
+                    SystemClock.sleep(3);
+                    moveBall(width, height);
                     // call to onDraw() from Thread
                     postInvalidate();
 
@@ -199,13 +207,70 @@ public class GameView extends View {
     {
         isRun = false;
     }
-    public void moveBall(int w, int h)
+    private void moveBall(int w, int h)
     {
+        this.ball.moveBall(w, h);
+        if( this.ball.getyCenter()== h - 185 && this.ball.getxCenter() > this.paddle.getX1() && this.ball.getxCenter() < this.paddle.getX2()){
+            this.ball.switchYDirection();
+        }
+        // strike
+        if(this.ball.getyCenter() > h - this.ball.getRadius()) {
+            if(lifesNumber == 1){
+                lifesNumber --;
+                state=GAME_OVER;
+            }
+            else {
+                lifesNumber --;
+                state=GET_READY;
+                resetLocations();
+            }
+            isRun = false;
+        }
+        didTouchBrick();
 
     }
 
+    private void didTouchBrick() {
+        for (int i=0; i<this.bricks.getRows(); i++)
+            for (int j=0; j < this.bricks.getColumns(); j++) {
+                if(ball.getxCenter() >= bricks.getBrick()[i][j].getX1() && ball.getxCenter() <= bricks.getBrick()[i][j].getX2()
+                && ball.getyCenter() >= bricks.getBrick()[i][j].getY1()  && ball.getyCenter() <= bricks.getBrick()[i][j].getY2()
+                && !bricks.getBrick()[i][j].isBroke()) {
+                    // check hit direction
+                    if(ball.getxCenter() == bricks.getBrick()[i][j].getX1() || ball.getxCenter() == bricks.getBrick()[i][j].getX2())
+                        ball.switchXDirection();
+                    else if(ball.getyCenter() == bricks.getBrick()[i][j].getY1() || ball.getyCenter() == bricks.getBrick()[i][j].getY2())
+                        ball.switchYDirection();
+                    bricks.getBrick()[i][j].setBrickBreak(true);
+                    scoreNum += 5*lifesNumber;
+
+                    // Finish game
+                    if(bricks.removeBrick() == 0)
+                        prepareNewGame();
+
+                }
+            }
+    }
+    // place the paddle and the ball on the center
+    private void resetLocations ()  {
+        paddle.setX1((float)this.width/2-brickWidth/2);
+        paddle.setX2((float)this.width/2+brickWidth/2);
+        paddle.setY1((float)this.height-150-this.brickHeight/2);
+        paddle.setY2((float)this.height-150);
+        ball.setxCenter(this.width/2);
+        ball.setyCenter(this.height-150-brickHeight);
+    }
+
+    private void prepareNewGame() {
+        state=GET_READY;
+        resetLocations();
+        isRun = false;
+        scoreNum = 0;
+        lifesNumber=3;
+        this.bricks = new BrickCollection(this.width,this.height);
 
     }
+}
 
 
 

@@ -12,7 +12,7 @@ public class BrickCollection {
     private static final int MIN_ROWS = 2;
     private static final int MIN_COLUMNS = 3;
     private float width, height;
-    private int rows,columns;
+    private int rows,columns, numberOfBricks;
     private float brickWidth,brickHeight; //TODO: set the size of the brick - width and height
 
     private Brick[][] bricks;
@@ -20,10 +20,11 @@ public class BrickCollection {
     public BrickCollection(float width,float height){
         this.height = height;
         this.width = width;
-
-        this.rows = (int)(Math.random()*(MAX_ROWS+1-MIN_ROWS))+MIN_ROWS;
-        this.columns = (int)(Math.random()*(MAX_COLUMNS+1-MIN_COLUMNS))+MIN_COLUMNS;
+        // TODO: fix this row column problem
+        this.columns = (int)(Math.random()*(MAX_ROWS+1-MIN_ROWS))+MIN_ROWS;
+        this.rows = (int)(Math.random()*(MAX_COLUMNS+1-MIN_COLUMNS))+MIN_COLUMNS;
         this.bricks = new Brick[this.rows][this.columns];
+        this.numberOfBricks = this.rows * this.columns;
         Log.i("test",this.rows + " - " + this.columns);
 
 
@@ -59,4 +60,16 @@ public class BrickCollection {
     public float getBrickWidth() {
         return brickWidth;
     }
+
+    public int getRows() { return  rows; }
+
+    public int getColumns() { return  columns; }
+    public int removeBrick() {
+        this.numberOfBricks--;
+        return this.numberOfBricks;
+    }
+    public Brick[][] getBrick() {
+        return bricks;
+    }
+
 }
