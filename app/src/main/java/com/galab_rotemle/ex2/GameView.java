@@ -4,26 +4,34 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 
 
 public class GameView extends View {
+
+
     private static final int GET_READY = 1;
     private static final int PLAYING = 2;
     private static final int GAME_OVER = 3;
     private Paint score;
     private Paint lives;
     private Paint life,lifeIn,lifeOut;
+    private Paint [] deaths;
+    private Thread ballThread;
+
     private int scoreNum,lifesNumber, state;
+
     private int height,width;
     private float tempX;
     private BrickCollection bricks;
     private Ball ball;
     private Paddle paddle;
-    private boolean toched;
+    private boolean toched, isRun;
     private float brickWidth,brickHeight;
     private Paint startGame, finishGame;
     private Thread thread;
@@ -32,6 +40,7 @@ public class GameView extends View {
         super(context, attrs);
         state =1;
         scoreNum=0;
+
         toched = false;
         lifesNumber = 3;
         score = new Paint();
@@ -56,6 +65,13 @@ public class GameView extends View {
         life = new Paint();
         life.setColor(Color.GREEN);
 
+        deaths = new Paint[3];
+        for (int i=0; i<3; i++) {
+            deaths[i] = new Paint();
+            deaths[i].setColor(Color.WHITE);
+        }
+
+
         startGame = new Paint();
         startGame.setColor(Color.GREEN);
         startGame.setTextSize(75);
@@ -78,30 +94,14 @@ public class GameView extends View {
         canvas.drawCircle(getWidth() - 110,80,30,life);
         canvas.drawCircle(getWidth() - 180,80,30,life);
 
-        switch (lifesNumber){
-            case 0:
-                canvas.drawCircle(getWidth() - 40,80,25,lifeOut);
-                canvas.drawCircle(getWidth() - 110,80,25,lifeOut);
-                canvas.drawCircle(getWidth() - 180,80,25,lifeOut);
-                break;
-            case 1:
-                canvas.drawCircle(getWidth() - 40,80,25,lifeIn);
-                canvas.drawCircle(getWidth() - 110,80,25,lifeOut);
-                canvas.drawCircle(getWidth() - 180,80,25,lifeOut);
-                break;
-            case 2:
-                canvas.drawCircle(getWidth() - 40,80,25,lifeIn);
-                canvas.drawCircle(getWidth() - 110,80,25,lifeIn);
-                canvas.drawCircle(getWidth() - 180,80,25,lifeOut);
-                break;
-            case 3:
-                canvas.drawCircle(getWidth() - 40,80,25,lifeIn);
-                canvas.drawCircle(getWidth() - 110,80,25,lifeIn);
-                canvas.drawCircle(getWidth() - 180,80,25,lifeIn);
-                break;
+        // Fill the lives remaining with white
+        for (int i=0; i<deaths.length; i++) {
+            canvas.drawCircle(getWidth() - 180 + 70*i,80,25,deaths[i]);
+            if(i<(this.deaths.length - this.lifesNumber))
+                this.deaths[i].setColor(Color.parseColor("#434343"));
+            else
+                this.deaths[i].setColor(Color.parseColor("#ffffff"));
         }
-
-
 
         // draw the bricks collection
         this.bricks.draw(canvas);
@@ -126,6 +126,7 @@ public class GameView extends View {
         if(state == PLAYING)
             if(toched){
                 this.paddle.movePaddle(tempX,this.width);
+                invalidate();
             }
 
     }
@@ -136,7 +137,6 @@ public class GameView extends View {
 
         this.height = getHeight();
         this.width = getWidth();
-
 
         this.bricks = new BrickCollection(this.width,this.height);
         this.brickWidth =  this.bricks.getBrickWidth();
@@ -153,10 +153,16 @@ public class GameView extends View {
         this.tempX = event.getX();
         switch (event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                if(state == GET_READY)
+                if(state == GET_READY){
+                    startBallMovement();
                     state = PLAYING;
+                }
                 if(state == PLAYING)
                     this.toched = true;
+                if(state == GAME_OVER) {
+                    state = GET_READY;
+                    prepareNewGame();
+                }
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -167,6 +173,7 @@ public class GameView extends View {
             case MotionEvent.ACTION_UP:
                 if(state == PLAYING)
                     this.toched = false;
+                Log.d("myLog", "onTouchEvent UP: ");
                 break;
         }
 
@@ -174,7 +181,97 @@ public class GameView extends View {
         return true;
     }
 
+    public void startBallMovement()
+    {
+        isRun = true;
+        ballThread = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                while(isRun)
+                {
+                    // update Hands
+                    SystemClock.sleep(3);
+                    moveBall(width, height);
+                    // call to onDraw() from Thread
+                    postInvalidate();
 
+                }
+            }
+        });
+        ballThread.start();
+    }
+
+    public void stopBall()
+    {
+        isRun = false;
+    }
+    private void moveBall(int w, int h)
+    {
+        this.ball.moveBall(w, h);
+        if( this.ball.getyCenter()== h - 185 && this.ball.getxCenter() > this.paddle.getX1() && this.ball.getxCenter() < this.paddle.getX2()){
+            this.ball.switchYDirection();
+        }
+        // strike
+        if(this.ball.getyCenter() > h - this.ball.getRadius()) {
+            if(lifesNumber == 1){
+                lifesNumber --;
+                state=GAME_OVER;
+            }
+            else {
+                lifesNumber --;
+                state=GET_READY;
+                resetLocations();
+            }
+            isRun = false;
+        }
+        didTouchBrick();
+
+    }
+
+    private void didTouchBrick() {
+        for (int i=0; i<this.bricks.getRows(); i++)
+            for (int j=0; j < this.bricks.getColumns(); j++) {
+                if(ball.getxCenter() >= bricks.getBrick()[i][j].getX1() && ball.getxCenter() <= bricks.getBrick()[i][j].getX2()
+                && ball.getyCenter() >= bricks.getBrick()[i][j].getY1()  && ball.getyCenter() <= bricks.getBrick()[i][j].getY2()
+                && !bricks.getBrick()[i][j].isBroke()) {
+                    // check hit direction
+                    if(ball.getxCenter() == bricks.getBrick()[i][j].getX1() || ball.getxCenter() == bricks.getBrick()[i][j].getX2())
+                        ball.switchXDirection();
+                    else if(ball.getyCenter() == bricks.getBrick()[i][j].getY1() || ball.getyCenter() == bricks.getBrick()[i][j].getY2())
+                        ball.switchYDirection();
+                    bricks.getBrick()[i][j].setBrickBreak(true);
+                    scoreNum += 5*lifesNumber;
+
+                    // Finish game
+                    if(bricks.removeBrick() == 0)
+                        prepareNewGame();
+
+                }
+            }
+    }
+    // place the paddle and the ball on the center
+    private void resetLocations ()  {
+        paddle.setX1((float)this.width/2-brickWidth/2);
+        paddle.setX2((float)this.width/2+brickWidth/2);
+        paddle.setY1((float)this.height-150-this.brickHeight/2);
+        paddle.setY2((float)this.height-150);
+        ball.setxCenter(this.width/2);
+        ball.setyCenter(this.height-150-brickHeight);
+    }
+
+    private void prepareNewGame() {
+        state=GET_READY;
+        resetLocations();
+        isRun = false;
+        scoreNum = 0;
+        lifesNumber=3;
+        this.bricks = new BrickCollection(this.width,this.height);
+
+    }
 }
+
+
 
 

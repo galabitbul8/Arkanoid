@@ -63,4 +63,9 @@ public class Brick {
     public void setBrickBreak(boolean brickBreak) {
         this.brickBreak = brickBreak;
     }
+
+    public boolean isBroke() {
+        return brickBreak;
+    }
+
 }
