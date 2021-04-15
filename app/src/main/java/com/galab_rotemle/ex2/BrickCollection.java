@@ -13,7 +13,7 @@ public class BrickCollection {
     private static final int MIN_COLUMNS = 3;
     private float width, height;
     private int rows,columns, numberOfBricks;
-    private float brickWidth,brickHeight; //TODO: set the size of the brick - width and height
+    private float brickWidth,brickHeight;
 
     private Brick[][] bricks;
 
@@ -42,7 +42,6 @@ public class BrickCollection {
         }
         this.brickHeight = this.height/20;
         this.brickWidth = x2-x1;
-        Log.i("test",this.brickHeight + " - " + this.brickWidth);
     }
 
     public void draw(Canvas canvas){
