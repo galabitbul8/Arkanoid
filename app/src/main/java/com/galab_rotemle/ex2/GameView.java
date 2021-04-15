@@ -210,7 +210,7 @@ public class GameView extends View {
     private void moveBall(int w, int h)
     {
         this.ball.moveBall(w, h);
-        if( this.ball.getyCenter()== h - 185 && this.ball.getxCenter() > this.paddle.getX1() && this.ball.getxCenter() < this.paddle.getX2()){
+        if( this.ball.getyCenter()== h - 185 && this.ball.getxCenter()-this.ball.getRadius() > this.paddle.getX1() && this.ball.getxCenter() -this.ball.getRadius() < this.paddle.getX2()){
             this.ball.switchYDirection();
         }
         // strike
@@ -233,13 +233,14 @@ public class GameView extends View {
     private void didTouchBrick() {
         for (int i=0; i<this.bricks.getRows(); i++)
             for (int j=0; j < this.bricks.getColumns(); j++) {
-                if(ball.getxCenter() >= bricks.getBrick()[i][j].getX1() && ball.getxCenter() <= bricks.getBrick()[i][j].getX2()
-                && ball.getyCenter() >= bricks.getBrick()[i][j].getY1()  && ball.getyCenter() <= bricks.getBrick()[i][j].getY2()
+                if(ball.getxCenter() + this.ball.getRadius() >= bricks.getBrick()[i][j].getX1() && ball.getxCenter() -ball.getRadius() <= bricks.getBrick()[i][j].getX2()
+                && ball.getyCenter() +ball.getRadius() >= bricks.getBrick()[i][j].getY1()  && ball.getyCenter() -ball.getRadius() <= bricks.getBrick()[i][j].getY2()
                 && !bricks.getBrick()[i][j].isBroke()) {
+
                     // check hit direction
-                    if(ball.getxCenter() == bricks.getBrick()[i][j].getX1() || ball.getxCenter() == bricks.getBrick()[i][j].getX2())
+                    if(ball.getxCenter() + ball.getRadius() == bricks.getBrick()[i][j].getX1() || ball.getxCenter() -ball.getRadius()  == bricks.getBrick()[i][j].getX2())
                         ball.switchXDirection();
-                    else if(ball.getyCenter() == bricks.getBrick()[i][j].getY1() || ball.getyCenter() == bricks.getBrick()[i][j].getY2())
+                    else if(ball.getyCenter() + ball.getRadius() == bricks.getBrick()[i][j].getY1() || ball.getyCenter() -ball.getRadius() == bricks.getBrick()[i][j].getY2())
                         ball.switchYDirection();
                     bricks.getBrick()[i][j].setBrickBreak(true);
                     scoreNum += 5*lifesNumber;
