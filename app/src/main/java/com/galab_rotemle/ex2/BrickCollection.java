@@ -7,10 +7,10 @@ import java.util.Random;
 
 
 public class BrickCollection {
-    private static final int MAX_ROWS = 6;
-    private static final int MAX_COLUMNS = 7;
-    private static final int MIN_ROWS = 2;
-    private static final int MIN_COLUMNS = 3;
+    private static final int MAX_ROWS = 3; //6
+    private static final int MAX_COLUMNS = 13; //7
+    private static final int MIN_ROWS = 3; //2
+    private static final int MIN_COLUMNS = 13; //3
     private float width, height;
     private int rows,columns, numberOfBricks;
     private float brickWidth,brickHeight; //TODO: set the size of the brick - width and height

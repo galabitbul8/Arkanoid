@@ -5,7 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class Paddle {
-    private float x1,x2,y1,y2;
+    private float x1,x2,y1,y2, direction;
     private Paint paddle;
 
 
@@ -14,6 +14,7 @@ public class Paddle {
         this.x2 = x2;
         this.y1 = y1;
         this.y2 = y2;
+        this.direction = 1;
 
         this.paddle = new Paint();
         this.paddle.setColor(Color.BLUE);
@@ -55,16 +56,22 @@ public class Paddle {
         this.x2 = x2;
     }
 
+    public float getDirection() {
+        return direction;
+    }
+
     public void movePaddle(float x,float width){
         if(x>=width/2){
             if(x2<width) {
                 this.x1 += 10;
                 this.x2 += 10;
+                this.direction = 1;
             }
         }else{
             if(x1>0){
                 this.x1 -= 10;
                 this.x2 -= 10;
+                this.direction = -1;
             }
 
         }
