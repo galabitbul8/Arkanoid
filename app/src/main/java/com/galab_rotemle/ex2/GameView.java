@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
 
 
 public class GameView extends View {
@@ -133,6 +134,7 @@ public class GameView extends View {
 
     }
 
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
@@ -173,7 +175,6 @@ public class GameView extends View {
             case MotionEvent.ACTION_UP:
                 if(state == PLAYING)
                     this.toched = false;
-                Log.d("myLog", "onTouchEvent UP: ");
                 break;
         }
 
@@ -194,10 +195,10 @@ public class GameView extends View {
                     SystemClock.sleep(5);
                     if(isRun) {
                         moveBall(width, height);
-                    }
+                        // call to onDraw() from Thread
+                        postInvalidate();
 
-                    // call to onDraw() from Thread
-                    postInvalidate();
+                    }
 
                 }
             }
@@ -243,13 +244,12 @@ public class GameView extends View {
                     if((bricks.getBrick()[i][j].getX2() < ball.getxCenter() || bricks.getBrick()[i][j].getX1() > ball.getxCenter())
                     && ((bricks.getBrick()[i][j].getY2() -1 < ball.getyCenter() - ball.getRadius())
                     || (bricks.getBrick()[i][j].getY1() +1 > ball.getyCenter() + ball.getRadius()))) {
-                        Log.d("rotemLog", "didTouchBrickY: ");
+
                         if(!(ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY2())
                                 || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY1())
                                 || ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY1())
                                 || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY2())))
-                            return;
-                        Log.d("rotemLog", "didTouchBrickYAfter: ");
+                            continue;
 
                     }
                     if((bricks.getBrick()[i][j].getY2() < ball.getyCenter() || bricks.getBrick()[i][j].getY1() > ball.getyCenter())
@@ -261,27 +261,18 @@ public class GameView extends View {
                         || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY1())
                         || ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY1())
                         || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY2())))
-                            return;
-//                        boolean b =ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY2());
-//                        if(!b)
-//                            return;
-                        Log.d("rotemLog", "didTouchBrickXAfter: ");
+                            continue;
 
                     }
 
-
+                    // TODO: fix diagonal hit ( when the ball is on the edge)
                     if(ball.getyCenter() + ball.getRadius()  < bricks.getBrick()[i][j].getY1() +1 || ball.getyCenter() -ball.getRadius() > bricks.getBrick()[i][j].getY2() -1){
                         ball.switchYDirection();
                     }
                     else {
                         ball.switchXDirection();
                     }
-                    // check hit direction
-//                    if((ball.getxCenter() + ball.getRadius() >= bricks.getBrick()[i][j].getX1() && ball.getxCenter() + ball.getRadius() < bricks.getBrick()[i][j].getX1() + 1)
-//                            || (ball.getxCenter() -ball.getRadius()  <= bricks.getBrick()[i][j].getX2() && ball.getxCenter() -ball.getRadius() > bricks.getBrick()[i][j].getX2()-1))
-//                        ball.switchXDirection();
-//                    else if(ball.getyCenter() + ball.getRadius() == bricks.getBrick()[i][j].getY1() || ball.getyCenter() -ball.getRadius() == bricks.getBrick()[i][j].getY2())
-//                        ball.switchYDirection();
+
                     bricks.getBrick()[i][j].setBrickBreak(true);
                     scoreNum += 5*lifesNumber;
 
@@ -309,8 +300,14 @@ public class GameView extends View {
         scoreNum = 0;
         lifesNumber=3;
         this.bricks = new BrickCollection(this.width,this.height);
-
+        this.brickWidth =  this.bricks.getBrickWidth();
+        this.brickHeight = this.bricks.getBrickHeight();
+        this.paddle = new Paddle((float)this.width/2-brickWidth/2,(float)this.width/2+brickWidth/2,(float)this.height-150-this.brickHeight/2,(float)this.height-150);
+        invalidate();
     }
+    /*
+        Checks how the ball hit the paddle and change it's behaviour
+     */
     private void detectPaddleTouch() {
         if((paddle.getY1() <= ball.getyCenter() + ball.getRadius() && ball.getyCenter() + ball.getRadius() < paddle.getY1() +1 && paddle.getX1() <= ball.getxCenter() + ball.getRadius() && ball.getxCenter() - ball.getRadius() <= paddle.getX2())) {
             this.ball.switchYDirection();
@@ -318,10 +315,6 @@ public class GameView extends View {
         else if( (paddle.getY1()< ball.getyCenter() + ball.getRadius() && ball.getyCenter() - ball.getRadius()<paddle.getY2()) &&
                 ((ball.getxCenter() + ball.getRadius()>=paddle.getX1() && ball.getxCenter() + ball.getRadius() < paddle.getX1() + 20) ||
                         (ball.getxCenter() - ball.getRadius()<=paddle.getX2() && ball.getxCenter() + ball.getRadius() > paddle.getX2() - 20))){
-
-            Log.d("rotemLog", "detectPaddleTouch: " + (toched &&  (ball.getDx() * paddle.getDirection())> 0 &&
-                    ((ball.getDx()>0 && (Math.abs(paddle.getX2() - ball.getxCenter()) < Math.abs(paddle.getX1() - ball.getxCenter())))
-                            || (ball.getDx()<0 && (Math.abs(paddle.getX1() - ball.getxCenter()) < Math.abs(paddle.getX2() - ball.getxCenter()) )))) );
 
             if(toched &&  (ball.getDx() * paddle.getDirection())> 0 &&
                     ((ball.getDx()>0 && (Math.abs(paddle.getX2() - ball.getxCenter()) < Math.abs(paddle.getX1() - ball.getxCenter())))

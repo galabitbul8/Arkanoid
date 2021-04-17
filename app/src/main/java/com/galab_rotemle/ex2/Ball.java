@@ -23,7 +23,6 @@ public class Ball {
     }
     public void draw(Canvas canvas){
         canvas.drawCircle(this.xCenter,this.yCenter,this.radius, this.ball);
-        Log.d("BallDraw", "draw ball at: x " + this.xCenter + " y " + this.yCenter);
     }
 
     public float getxCenter() {
@@ -52,14 +51,10 @@ public class Ball {
             range = -1;
         else
             range = 1;
-//        this.dx = ((int)(Math.random()*(3))+1) * (float)range;
-        this.dx = 3;
+        this.dx = ((int)(Math.random()*(4))+2) * (float)range;
     }
 
     public boolean inBallRange(float x, float y) {
-        Log.d("rotemLog", "inBallRange radius: " + this.getRadius());
-
-        Log.d("rotemLog", "inBallRange test: " + (Math.sqrt(Math.pow(x - this.getxCenter(), 2)+ Math.pow(y - this.getyCenter(),2)) ));
         return (Math.sqrt(Math.pow(x - this.getxCenter(), 2)+ Math.pow(y - this.getyCenter(),2)) <= this.getRadius());
     }
 
