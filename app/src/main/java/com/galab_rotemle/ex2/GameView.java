@@ -230,7 +230,7 @@ public class GameView extends View {
                 state=GET_READY;
                 resetLocations();
             }
-            isRun = false;
+//            isRun = false;
         }
         didTouchBrick();
 

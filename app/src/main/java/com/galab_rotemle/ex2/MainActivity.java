@@ -90,12 +90,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        gameView.setIsRun(true);
+//        gameView.setIsRun(true);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        gameView.setIsRun(false);
+//        gameView.setIsRun(false);
     }
 }
