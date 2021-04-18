@@ -35,7 +35,7 @@ public class GameView extends View {
     private boolean toched, isRun, flagStartGame;
     private float brickWidth,brickHeight;
     private Paint startGame, finishGame;
-    private Thread thread;
+    private Thread animation;
 
     public GameView(Context context,AttributeSet attrs) {
         super(context, attrs);
@@ -84,6 +84,7 @@ public class GameView extends View {
         finishGame.setTextSize(75);
         finishGame.setTextAlign(Paint.Align.CENTER);
         this.isRun = false;
+
         startBallMovement();
     }
 
@@ -119,6 +120,8 @@ public class GameView extends View {
                 canvas.drawText("Click to PLAY!",this.width/2,this.height/2,this.startGame);
                 break;
             case PLAYING:
+                moveBall(this.width,this.height);
+                this.ball.hitPaddle(this.paddle);
                 break;
             case GAME_OVER:
                 //when the player finish to play
@@ -146,7 +149,6 @@ public class GameView extends View {
         this.brickWidth =  this.bricks.getBrickWidth();
         this.brickHeight = this.bricks.getBrickHeight();
 
-        //TODO: fix size of paddle and of the ball
         this.paddle = new Paddle((float)this.width/2-brickWidth/2,(float)this.width/2+brickWidth/2,(float)this.height-150-this.brickHeight/2,(float)this.height-150);
         this.ball = new Ball(this.width/2,this.height-150-brickHeight,brickHeight/2);
 
@@ -160,9 +162,11 @@ public class GameView extends View {
                 if(state == GET_READY){
                     isRun = true;
                     state = PLAYING;
+
                 }
-                if(state == PLAYING)
+                if(state == PLAYING) {
                     this.toched = true;
+                }
                 if(state == GAME_OVER) {
                     state = GET_READY;
                     prepareNewGame();
@@ -184,22 +188,28 @@ public class GameView extends View {
 
     public void startBallMovement()
     {
+        isRun = true;
         ballThread = new Thread(new Runnable()
         {
             @Override
             public void run()
             {
-                while(true)
+// <<<<<<< rotemB
+//                 while(true)
+//                 {
+//                     // update Hands
+//                     SystemClock.sleep(5);
+//                     if(isRun) {
+//                         moveBall(width, height);
+//                         // call to onDraw() from Thread
+//                         postInvalidate();
+//                     }
+// =======
+                while(isRun)
                 {
                     // update Hands
                     SystemClock.sleep(5);
-                    if(isRun) {
-                        moveBall(width, height);
-                        // call to onDraw() from Thread
-                        postInvalidate();
-
-                    }
-
+                    postInvalidate();
                 }
             }
         });
@@ -228,7 +238,6 @@ public class GameView extends View {
                 state=GET_READY;
                 resetLocations();
             }
-            isRun = false;
         }
         didTouchBrick();
 
@@ -296,7 +305,7 @@ public class GameView extends View {
     private void prepareNewGame() {
         state=GET_READY;
         resetLocations();
-        isRun = false;
+//        isRun = false;
         scoreNum = 0;
         lifesNumber=3;
         this.bricks = new BrickCollection(this.width,this.height);

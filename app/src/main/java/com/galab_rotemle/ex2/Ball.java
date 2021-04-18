@@ -14,9 +14,12 @@ public class Ball {
         this.xCenter = xCenter;
         this.yCenter = yCenter;
         this.radius = radius;
-        this.dy = -1;
-         this.dx = -1;;
-        setRandomDx();
+//         this.dy = -1;
+//          this.dx = -1;;
+//         setRandomDx();
+        this.dy = ((float) (Math.random()*(20+1-10))+10)*(-1);
+        this.dx =  (float) (Math.random()*(20+1-10))+10;
+
         this.ball = new Paint();
         this.ball.setColor(Color.WHITE);
         this.ball.setStyle(Paint.Style.FILL);
@@ -83,7 +86,21 @@ public class Ball {
         if(xCenter-radius<0 || xCenter+radius>width)
             dx=-dx;
 
-        if(yCenter+radius>height || yCenter-radius<150)
+//         if(yCenter+radius>height || yCenter-radius<150)
+        if(yCenter+radius>height || yCenter-radius<0)
             dy = -dy;
+    }
+
+    public void hitPaddle(Paddle paddle){
+        //the ball hit the paddle in the tips
+        // the ball hit the paddle in the top
+        if((paddle.getY1() <= this.yCenter && paddle.getX1() <= this.xCenter && this.xCenter <= paddle.getX2()))
+        {
+            this.dy = -dy;
+        }
+        // the ball hit the paddle in the sides
+        else if( (paddle.getY1()<this.yCenter && this.yCenter<paddle.getY2()) && (this.xCenter<paddle.getX1()||this.xCenter<paddle.getX2()) ){
+            this.dx= -dx;
+        }
     }
 }
