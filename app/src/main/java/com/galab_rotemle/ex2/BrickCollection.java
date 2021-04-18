@@ -20,7 +20,7 @@ public class BrickCollection {
     public BrickCollection(float width,float height){
         this.height = height;
         this.width = width;
-        // TODO: fix this row column problem
+
         this.columns = (int)(Math.random()*(MAX_ROWS+1-MIN_ROWS))+MIN_ROWS;
         this.rows = (int)(Math.random()*(MAX_COLUMNS+1-MIN_COLUMNS))+MIN_COLUMNS;
         this.bricks = new Brick[this.rows][this.columns];

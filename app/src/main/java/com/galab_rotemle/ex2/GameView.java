@@ -120,8 +120,6 @@ public class GameView extends View {
                 canvas.drawText("Click to PLAY!",this.width/2,this.height/2,this.startGame);
                 break;
             case PLAYING:
-                moveBall(this.width,this.height);
-                this.ball.hitPaddle(this.paddle);
                 break;
             case GAME_OVER:
                 //when the player finish to play
@@ -188,29 +186,20 @@ public class GameView extends View {
 
     public void startBallMovement()
     {
-        isRun = true;
         ballThread = new Thread(new Runnable()
         {
             @Override
-            public void run()
-            {
-// <<<<<<< rotemB
-//                 while(true)
-//                 {
-//                     // update Hands
-//                     SystemClock.sleep(5);
-//                     if(isRun) {
-//                         moveBall(width, height);
-//                         // call to onDraw() from Thread
-//                         postInvalidate();
-//                     }
-// =======
-                while(isRun)
-                {
-                    // update Hands
-                    SystemClock.sleep(5);
-                    postInvalidate();
-                }
+            public void run() {
+                 while(true)
+                 {
+                     // update Hands
+                     SystemClock.sleep(5);
+                     if(isRun) {
+                         moveBall(width, height);
+                         // call to onDraw() from Thread
+                         postInvalidate();
+                     }
+                 }
             }
         });
         flagStartGame = false;
@@ -238,6 +227,7 @@ public class GameView extends View {
                 state=GET_READY;
                 resetLocations();
             }
+            isRun = false;
         }
         didTouchBrick();
 
@@ -247,12 +237,12 @@ public class GameView extends View {
         for (int i=0; i<this.bricks.getRows(); i++)
             for (int j=0; j < this.bricks.getColumns(); j++) {
                 if(ball.getxCenter() + this.ball.getRadius() >= bricks.getBrick()[i][j].getX1() && ball.getxCenter() -ball.getRadius() <= bricks.getBrick()[i][j].getX2()
-                && ball.getyCenter() +ball.getRadius() >= bricks.getBrick()[i][j].getY1()  && ball.getyCenter() -ball.getRadius() <= bricks.getBrick()[i][j].getY2()
-                && !bricks.getBrick()[i][j].isBroke()) {
+                        && ball.getyCenter() +ball.getRadius() >= bricks.getBrick()[i][j].getY1()  && ball.getyCenter() -ball.getRadius() <= bricks.getBrick()[i][j].getY2()
+                        && !bricks.getBrick()[i][j].isBroke()) {
 
                     if((bricks.getBrick()[i][j].getX2() < ball.getxCenter() || bricks.getBrick()[i][j].getX1() > ball.getxCenter())
-                    && ((bricks.getBrick()[i][j].getY2() -1 < ball.getyCenter() - ball.getRadius())
-                    || (bricks.getBrick()[i][j].getY1() +1 > ball.getyCenter() + ball.getRadius()))) {
+                            && ((bricks.getBrick()[i][j].getY2() -1 < ball.getyCenter() - ball.getRadius())
+                            || (bricks.getBrick()[i][j].getY1() +1 > ball.getyCenter() + ball.getRadius()))) {
 
                         if(!(ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY2())
                                 || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY1())
@@ -267,9 +257,9 @@ public class GameView extends View {
                         Log.d("rotemLog", "didTouchBrickX: ");
 
                         if(!(ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY2())
-                        || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY1())
-                        || ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY1())
-                        || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY2())))
+                                || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY1())
+                                || ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY1())
+                                || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY2())))
                             continue;
 
                     }
@@ -305,7 +295,7 @@ public class GameView extends View {
     private void prepareNewGame() {
         state=GET_READY;
         resetLocations();
-//        isRun = false;
+        isRun = false;
         scoreNum = 0;
         lifesNumber=3;
         this.bricks = new BrickCollection(this.width,this.height);
@@ -327,7 +317,7 @@ public class GameView extends View {
 
             if(toched &&  (ball.getDx() * paddle.getDirection())> 0 &&
                     ((ball.getDx()>0 && (Math.abs(paddle.getX2() - ball.getxCenter()) < Math.abs(paddle.getX1() - ball.getxCenter())))
-                    || (ball.getDx()<0 && (Math.abs(paddle.getX1() - ball.getxCenter()) < Math.abs(paddle.getX2() - ball.getxCenter()) ))))
+                            || (ball.getDx()<0 && (Math.abs(paddle.getX1() - ball.getxCenter()) < Math.abs(paddle.getX2() - ball.getxCenter()) ))))
                 ball.setDx(ball.getDx() + paddle.getDirection() * 2);
             else
                 this.ball.switchXDirection();
