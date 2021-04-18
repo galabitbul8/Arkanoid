@@ -14,6 +14,9 @@ public class Ball {
         this.xCenter = xCenter;
         this.yCenter = yCenter;
         this.radius = radius;
+//         this.dy = -1;
+//          this.dx = -1;;
+//         setRandomDx();
         this.dy = ((float) (Math.random()*(20+1-10))+10)*(-1);
         this.dx =  (float) (Math.random()*(20+1-10))+10;
 
@@ -23,7 +26,6 @@ public class Ball {
     }
     public void draw(Canvas canvas){
         canvas.drawCircle(this.xCenter,this.yCenter,this.radius, this.ball);
-        Log.d("BallDraw", "draw ball at: x " + this.xCenter + " y " + this.yCenter);
     }
 
     public float getxCenter() {
@@ -36,6 +38,27 @@ public class Ball {
 
     public float getRadius() {
         return radius;
+    }
+
+    public float getDx() {
+        return dx;
+    }
+
+    public void setDx(float dx) {
+        this.dx = dx;
+    }
+
+    public void setRandomDx() {
+        double range = Math.random()*(2) -1;
+        if(range < 0)
+            range = -1;
+        else
+            range = 1;
+        this.dx = ((int)(Math.random()*(4))+2) * (float)range;
+    }
+
+    public boolean inBallRange(float x, float y) {
+        return (Math.sqrt(Math.pow(x - this.getxCenter(), 2)+ Math.pow(y - this.getyCenter(),2)) <= this.getRadius());
     }
 
     public void setxCenter(float xCenter) {
@@ -63,6 +86,7 @@ public class Ball {
         if(xCenter-radius<0 || xCenter+radius>width)
             dx=-dx;
 
+//         if(yCenter+radius>height || yCenter-radius<150)
         if(yCenter+radius>height || yCenter-radius<0)
             dy = -dy;
     }

@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED);
     }
 
+
     @Override
     protected void onStart()
     {
