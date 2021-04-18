@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class BrickCollection {
     private static final int MAX_ROWS = 6;
-    private static final int MAX_COLUMNS = 14;
+    private static final int MAX_COLUMNS = 7;
     private static final int MIN_ROWS = 2;
     private static final int MIN_COLUMNS = 3;
     private float width, height;
