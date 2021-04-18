@@ -92,6 +92,16 @@ public class GameView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        // draw the ball and the paddle
+        this.ball.draw(canvas);
+        this.paddle.draw(canvas);
+        
+        // draw the upper view - score and lives
+        canvas.drawText("Score: "+scoreNum,50,100,score);
+        canvas.drawText("Lives: ",getWidth()-(3*70)- 20,100,lives);
+        canvas.drawCircle(getWidth() - 40,80,30,life);
+        canvas.drawCircle(getWidth() - 110,80,30,life);
+        canvas.drawCircle(getWidth() - 180,80,30,life);
 
         // Fill the lives remaining with white
         for (int i=0; i<deaths.length; i++) {
@@ -105,16 +115,8 @@ public class GameView extends View {
         // draw the bricks collection
         this.bricks.draw(canvas);
 
-        // draw the ball and the paddle
-        this.ball.draw(canvas);
-        this.paddle.draw(canvas);
 
-        // draw the upper view - score and lives
-        canvas.drawText("Score: "+scoreNum,50,100,score);
-        canvas.drawText("Lives: ",getWidth()-(3*70)- 20,100,lives);
-        canvas.drawCircle(getWidth() - 40,80,30,life);
-        canvas.drawCircle(getWidth() - 110,80,30,life);
-        canvas.drawCircle(getWidth() - 180,80,30,life);
+
 
         switch (state){
             case GET_READY:
@@ -215,6 +217,9 @@ public class GameView extends View {
     }
     private void moveBall(int w, int h)
     {
+        if(this.ball == null)
+            return;
+        Log.d("test", "moveBall:  " + this.ball);
         this.ball.moveBall(w, h);
         detectPaddleTouch();
 
@@ -230,7 +235,7 @@ public class GameView extends View {
                 state=GET_READY;
                 resetLocations();
             }
-//            isRun = false;
+            isRun = false;
         }
         didTouchBrick();
 
@@ -329,7 +334,8 @@ public class GameView extends View {
     }
 
     public void setIsRun(boolean run){
-        this.isRun = run;
+        if(run != this.isRun)
+            this.isRun = run;
     }
 }
 
