@@ -48,6 +48,10 @@ public class Ball {
         this.dx = dx;
     }
 
+    public void setDy(float dy) {
+        this.dy = dy;
+    }
+
     public void setRandomDx() {
         double range = Math.random()*(2) -1;
         if(range < 0)

@@ -306,6 +306,7 @@ public class GameView extends View {
         isRun = false;
         scoreNum = 0;
         lifesNumber=3;
+        this.ball.setDy(-1);
         this.bricks = new BrickCollection(this.width,this.height);
         this.brickWidth =  this.bricks.getBrickWidth();
         this.brickHeight = this.bricks.getBrickHeight();
@@ -334,8 +335,10 @@ public class GameView extends View {
     }
 
     public void setIsRun(boolean run){
-        if(run != this.isRun)
-            this.isRun = run;
+        if(run == true && this.state == PLAYING)
+            this.isRun = true;
+        else
+            this.isRun = false;
     }
 }
 
