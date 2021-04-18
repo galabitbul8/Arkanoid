@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         notificationsSetup();
         broadcastSetup();
-        //gameView = (GameView)findViewById(R.id.);
+        gameView = (GameView)findViewById(R.id.game);
     }
 
 
@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     private void broadcastSetup()
     {
         // 1. Create a new Class that extends Broadcast Receiver
-
         // 2. Create BatteryReceiver object
         batteryReceiver = new MyReceiver(this,CHANNEL_ID,this.notificationID, this.notificationManager);
 
@@ -76,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart()
     {
         super.onStart();
-
         // 4. Register the receiver to start listening for battery change messages
         registerReceiver(batteryReceiver, filter);
     }
@@ -85,9 +83,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop()
     {
         super.onStop();
-
         // 5. Un-Register the receiver to stop listening for battery change messages
         unregisterReceiver(batteryReceiver);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gameView.setIsRun(true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gameView.setIsRun(false);
+    }
 }

@@ -334,6 +334,10 @@ public class GameView extends View {
 
         }
     }
+
+    public void setIsRun(boolean run){
+        this.isRun = run;
+    }
 }
 
 
