@@ -127,7 +127,7 @@ public class GameView extends View {
                 break;
             case GAME_OVER:
                 //when the player finish to play
-                canvas.drawText("GAME OVER - You Loss!",this.width/2,this.height/2,this.startGame);
+                canvas.drawText("GAME OVER - You Lose!",this.width/2,this.height/2,this.startGame);
                 break;
         }
 
@@ -259,6 +259,7 @@ public class GameView extends View {
                             continue;
 
                     }
+                    Log.d("test", "didTouchBrick: Y2: " + bricks.getBrick()[i][j].getY2() + " Y1: "+ bricks.getBrick()[i][j].getY1() + " ball "+ this.ball.getyCenter());
                     if((bricks.getBrick()[i][j].getY2() < ball.getyCenter() || bricks.getBrick()[i][j].getY1() > ball.getyCenter())
                             && ((bricks.getBrick()[i][j].getX2() -1 < ball.getxCenter() - ball.getRadius())
                             || (bricks.getBrick()[i][j].getX1() +1 > ball.getxCenter() + ball.getRadius()))) {
@@ -273,7 +274,9 @@ public class GameView extends View {
                     }
 
                     // TODO: fix diagonal hit ( when the ball is on the edge)
-                    if(ball.getyCenter() + ball.getRadius()  < bricks.getBrick()[i][j].getY1() +1 || ball.getyCenter() -ball.getRadius() > bricks.getBrick()[i][j].getY2() -1){
+                    if(ball.getyCenter() + ball.getRadius()  < bricks.getBrick()[i][j].getY1() +1 || ball.getyCenter() -ball.getRadius() > bricks.getBrick()[i][j].getY2() -1
+                    || (ball.getDx() > 0 && ball.getxCenter() > (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)
+                    || (ball.getDx() < 0 && ball.getxCenter() < (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)){
                         ball.switchYDirection();
                     }
                     else {
