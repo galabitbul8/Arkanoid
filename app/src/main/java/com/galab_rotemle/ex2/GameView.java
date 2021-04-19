@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -24,7 +25,7 @@ public class GameView extends View {
     private Paint life,lifeIn,lifeOut;
     private Paint [] deaths;
     private Thread ballThread;
-
+    MediaPlayer mp;
     private int scoreNum,lifesNumber, state;
 
     private int height,width;
@@ -273,22 +274,29 @@ public class GameView extends View {
 
                     }
 
-                    // TODO: fix diagonal hit ( when the ball is on the edge)
-                    if(ball.getyCenter() + ball.getRadius()  < bricks.getBrick()[i][j].getY1() +1 || ball.getyCenter() -ball.getRadius() > bricks.getBrick()[i][j].getY2() -1
-                    || (ball.getDx() > 0 && ball.getxCenter() > (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)
-                    || (ball.getDx() < 0 && ball.getxCenter() < (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)){
-                        ball.switchYDirection();
-                    }
-                    else {
-                        ball.switchXDirection();
-                    }
-
                     bricks.getBrick()[i][j].setBrickBreak(true);
                     scoreNum += 5*lifesNumber;
 
                     // Finish game
                     if(bricks.removeBrick() == 0)
                         prepareNewGame();
+
+                    // TODO: fix diagonal hit ( when the ball is on the edge)
+                    if(ball.getyCenter() + ball.getRadius()  < bricks.getBrick()[i][j].getY1() +1 || ball.getyCenter() -ball.getRadius() > bricks.getBrick()[i][j].getY2() -1
+                    || (ball.getDx() > 0 && ball.getxCenter() > (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)
+                    || (ball.getDx() < 0 && ball.getxCenter() < (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)){
+                        ball.switchYDirection();
+                        mp.start();
+                        return;
+                    }
+                    else {
+                        ball.switchXDirection();
+                        mp.start();
+                        return;
+                    }
+
+
+
 
                 }
             }
@@ -342,6 +350,10 @@ public class GameView extends View {
             this.isRun = true;
         else
             this.isRun = false;
+    }
+
+    public void setSound(MediaPlayer mp) {
+        this.mp = mp;
     }
 }
 
