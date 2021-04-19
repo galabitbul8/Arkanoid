@@ -277,27 +277,28 @@ public class GameView extends View {
                     bricks.getBrick()[i][j].setBrickBreak(true);
                     scoreNum += 5*lifesNumber;
 
-                    // Finish game
-                    if(bricks.removeBrick() == 0)
-                        prepareNewGame();
+                    if(mp.isPlaying())
+                        mp.seekTo(0);
+                    else
+                        mp.start();
 
+                    // Finish game
+                    if(bricks.removeBrick() == 0) {
+                        prepareNewGame();
+                        return;
+                    }
                     // TODO: fix diagonal hit ( when the ball is on the edge)
                     if(ball.getyCenter() + ball.getRadius()  < bricks.getBrick()[i][j].getY1() +1 || ball.getyCenter() -ball.getRadius() > bricks.getBrick()[i][j].getY2() -1
                     || (ball.getDx() > 0 && ball.getxCenter() > (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)
                     || (ball.getDx() < 0 && ball.getxCenter() < (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)){
                         ball.switchYDirection();
-                        mp.start();
                         return;
                     }
                     else {
                         ball.switchXDirection();
-                        mp.start();
+
                         return;
                     }
-
-
-
-
                 }
             }
     }
