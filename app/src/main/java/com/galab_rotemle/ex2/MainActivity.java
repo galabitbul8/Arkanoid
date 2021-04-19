@@ -11,6 +11,7 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private BroadcastReceiver batteryReceiver;
     private IntentFilter filter;
-
+    MediaPlayer mp;
     private GameView gameView;
 
     @Override
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         notificationsSetup();
         broadcastSetup();
         gameView = (GameView)findViewById(R.id.game);
+        mp = MediaPlayer.create(this, R.raw.hitsound);
+        gameView.setSound(mp);
     }
 
 
