@@ -16,6 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class GameView extends View {
 
+    private  final int MAX_ROWS = 6;
+    private  final int MAX_COLUMNS = 7;
+    private  final int MIN_ROWS = 2;
+    private  final int MIN_COLUMNS = 3;
 
     private static final int GET_READY = 1;
     private static final int PLAYING = 2;
@@ -26,7 +30,7 @@ public class GameView extends View {
     private Paint [] deaths;
     private Thread ballThread;
     MediaPlayer mp;
-    private int scoreNum,lifesNumber, state;
+    private int scoreNum,lifesNumber, state, bricks_rows, bricks_cols;
 
     private int height,width;
     private float tempX;
@@ -49,6 +53,9 @@ public class GameView extends View {
         score = new Paint();
         score.setColor(Color.GREEN);
         score.setTextSize(75);
+
+        bricks_rows = (int)(Math.random()*(MAX_ROWS+1-MIN_ROWS))+MIN_ROWS;
+        bricks_cols = (int)(Math.random()*(MAX_COLUMNS+1-MIN_COLUMNS))+MIN_COLUMNS;
 
         lives = new Paint();
         lives.setColor(Color.GREEN);
@@ -122,9 +129,11 @@ public class GameView extends View {
         switch (state){
             case GET_READY:
                 //when the player start to play
+                this.isRun = false;
                 canvas.drawText("Click to PLAY!",this.width/2,this.height/2,this.startGame);
                 break;
             case PLAYING:
+                moveBall(width, height);
                 break;
             case GAME_OVER:
                 //when the player finish to play
@@ -135,7 +144,6 @@ public class GameView extends View {
         if(state == PLAYING)
             if(toched){
                 this.paddle.movePaddle(tempX,this.width);
-                invalidate();
             }
 
 
@@ -149,7 +157,7 @@ public class GameView extends View {
         this.height = getHeight();
         this.width = getWidth();
 
-        this.bricks = new BrickCollection(this.width,this.height);
+        this.bricks = new BrickCollection(this.width,this.height, this.bricks_cols, this.bricks_rows);
         this.brickWidth =  this.bricks.getBrickWidth();
         this.brickHeight = this.bricks.getBrickHeight();
 
@@ -201,7 +209,6 @@ public class GameView extends View {
                      // update Hands
                      SystemClock.sleep(5);
                      if(isRun) {
-                         moveBall(width, height);
                          // call to onDraw() from Thread
                          postInvalidate();
                      }
@@ -236,7 +243,6 @@ public class GameView extends View {
                 state=GET_READY;
                 resetLocations();
             }
-            isRun = false;
         }
         didTouchBrick();
 
@@ -250,8 +256,8 @@ public class GameView extends View {
                         && !bricks.getBrick()[i][j].isBroke()) {
 
                     if((bricks.getBrick()[i][j].getX2() < ball.getxCenter() || bricks.getBrick()[i][j].getX1() > ball.getxCenter())
-                            && ((bricks.getBrick()[i][j].getY2() -1 < ball.getyCenter() - ball.getRadius())
-                            || (bricks.getBrick()[i][j].getY1() +1 > ball.getyCenter() + ball.getRadius()))) {
+                            && ((bricks.getBrick()[i][j].getY2() -10 < ball.getyCenter() - ball.getRadius())
+                            || (bricks.getBrick()[i][j].getY1() +10 > ball.getyCenter() + ball.getRadius()))) {
 
                         if(!(ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY2())
                                 || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY1())
@@ -262,8 +268,8 @@ public class GameView extends View {
                     }
                     Log.d("test", "didTouchBrick: Y2: " + bricks.getBrick()[i][j].getY2() + " Y1: "+ bricks.getBrick()[i][j].getY1() + " ball "+ this.ball.getyCenter());
                     if((bricks.getBrick()[i][j].getY2() < ball.getyCenter() || bricks.getBrick()[i][j].getY1() > ball.getyCenter())
-                            && ((bricks.getBrick()[i][j].getX2() -1 < ball.getxCenter() - ball.getRadius())
-                            || (bricks.getBrick()[i][j].getX1() +1 > ball.getxCenter() + ball.getRadius()))) {
+                            && ((bricks.getBrick()[i][j].getX2() -10 < ball.getxCenter() - ball.getRadius())
+                            || (bricks.getBrick()[i][j].getX1() +10 > ball.getxCenter() + ball.getRadius()))) {
                         Log.d("rotemLog", "didTouchBrickX: ");
 
                         if(!(ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY2())
@@ -288,7 +294,7 @@ public class GameView extends View {
                         return;
                     }
                     // TODO: fix diagonal hit ( when the ball is on the edge)
-                    if(ball.getyCenter() + ball.getRadius()  < bricks.getBrick()[i][j].getY1() +1 || ball.getyCenter() -ball.getRadius() > bricks.getBrick()[i][j].getY2() -1
+                    if(ball.getyCenter() + ball.getRadius()  < bricks.getBrick()[i][j].getY1() +10 || ball.getyCenter() -ball.getRadius() > bricks.getBrick()[i][j].getY2() -10
                     || (ball.getDx() > 0 && ball.getxCenter() > (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)
                     || (ball.getDx() < 0 && ball.getxCenter() < (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)){
                         ball.switchYDirection();
@@ -315,15 +321,13 @@ public class GameView extends View {
     private void prepareNewGame() {
         state=GET_READY;
         resetLocations();
-        isRun = false;
         scoreNum = 0;
         lifesNumber=3;
-        this.ball.setDy(-1);
-        this.bricks = new BrickCollection(this.width,this.height);
+        this.ball.setDy(-5);
+        this.bricks = new BrickCollection(this.width,this.height, this.bricks_cols, this.bricks_rows);
         this.brickWidth =  this.bricks.getBrickWidth();
         this.brickHeight = this.bricks.getBrickHeight();
         this.paddle = new Paddle((float)this.width/2-brickWidth/2,(float)this.width/2+brickWidth/2,(float)this.height-150-this.brickHeight/2,(float)this.height-150);
-        invalidate();
     }
     /*
         Checks how the ball hit the paddle and change it's behaviour

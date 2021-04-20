@@ -14,7 +14,7 @@ public class Ball {
         this.xCenter = xCenter;
         this.yCenter = yCenter;
         this.radius = radius;
-         this.dy = -1;
+         this.dy = -5;
           this.dx = -1;;
          setRandomDx();
 //        this.dy = ((float) (Math.random()*(20+1-10))+10)*(-1);
@@ -58,7 +58,7 @@ public class Ball {
             range = -1;
         else
             range = 1;
-        this.dx = ((int)(Math.random()*(4))+2) * (float)range;
+        this.dx = ((int)(Math.random()*(15))+8) * (float)range;
     }
 
     public boolean inBallRange(float x, float y) {
