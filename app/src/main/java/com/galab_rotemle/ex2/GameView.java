@@ -144,7 +144,6 @@ public class GameView extends View {
         if(state == PLAYING)
             if(toched){
                 this.paddle.movePaddle(tempX,this.width);
-                invalidate();
             }
 
 
@@ -210,7 +209,6 @@ public class GameView extends View {
                      // update Hands
                      SystemClock.sleep(5);
                      if(isRun) {
-//                         moveBall(width, height);
                          // call to onDraw() from Thread
                          postInvalidate();
                      }
@@ -323,7 +321,6 @@ public class GameView extends View {
     private void prepareNewGame() {
         state=GET_READY;
         resetLocations();
-        isRun = false;
         scoreNum = 0;
         lifesNumber=3;
         this.ball.setDy(-5);
@@ -331,7 +328,6 @@ public class GameView extends View {
         this.brickWidth =  this.bricks.getBrickWidth();
         this.brickHeight = this.bricks.getBrickHeight();
         this.paddle = new Paddle((float)this.width/2-brickWidth/2,(float)this.width/2+brickWidth/2,(float)this.height-150-this.brickHeight/2,(float)this.height-150);
-        invalidate();
     }
     /*
         Checks how the ball hit the paddle and change it's behaviour
