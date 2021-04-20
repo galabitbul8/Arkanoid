@@ -16,6 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class GameView extends View {
 
+    private  final int MAX_ROWS = 6;
+    private  final int MAX_COLUMNS = 7;
+    private  final int MIN_ROWS = 2;
+    private  final int MIN_COLUMNS = 3;
 
     private static final int GET_READY = 1;
     private static final int PLAYING = 2;
@@ -26,7 +30,7 @@ public class GameView extends View {
     private Paint [] deaths;
     private Thread ballThread;
     MediaPlayer mp;
-    private int scoreNum,lifesNumber, state;
+    private int scoreNum,lifesNumber, state, bricks_rows, bricks_cols;
 
     private int height,width;
     private float tempX;
@@ -49,6 +53,9 @@ public class GameView extends View {
         score = new Paint();
         score.setColor(Color.GREEN);
         score.setTextSize(75);
+
+        bricks_rows = (int)(Math.random()*(MAX_ROWS+1-MIN_ROWS))+MIN_ROWS;
+        bricks_cols = (int)(Math.random()*(MAX_COLUMNS+1-MIN_COLUMNS))+MIN_COLUMNS;
 
         lives = new Paint();
         lives.setColor(Color.GREEN);
@@ -149,7 +156,7 @@ public class GameView extends View {
         this.height = getHeight();
         this.width = getWidth();
 
-        this.bricks = new BrickCollection(this.width,this.height);
+        this.bricks = new BrickCollection(this.width,this.height, this.bricks_cols, this.bricks_rows);
         this.brickWidth =  this.bricks.getBrickWidth();
         this.brickHeight = this.bricks.getBrickHeight();
 
@@ -319,7 +326,7 @@ public class GameView extends View {
         scoreNum = 0;
         lifesNumber=3;
         this.ball.setDy(-1);
-        this.bricks = new BrickCollection(this.width,this.height);
+        this.bricks = new BrickCollection(this.width,this.height, this.bricks_cols, this.bricks_rows);
         this.brickWidth =  this.bricks.getBrickWidth();
         this.brickHeight = this.bricks.getBrickHeight();
         this.paddle = new Paddle((float)this.width/2-brickWidth/2,(float)this.width/2+brickWidth/2,(float)this.height-150-this.brickHeight/2,(float)this.height-150);
