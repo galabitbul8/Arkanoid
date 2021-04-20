@@ -17,8 +17,6 @@ public class Ball {
          this.dy = -5;
           this.dx = -1;;
          setRandomDx();
-//        this.dy = ((float) (Math.random()*(20+1-10))+10)*(-1);
-//        this.dx =  (float) (Math.random()*(20+1-10))+10;
 
         this.ball = new Paint();
         this.ball.setColor(Color.WHITE);
@@ -44,6 +42,10 @@ public class Ball {
         return dx;
     }
 
+    public float getDy() {
+        return dy;
+    }
+
     public void setDx(float dx) {
         this.dx = dx;
     }
@@ -51,7 +53,7 @@ public class Ball {
     public void setDy(float dy) {
         this.dy = dy;
     }
-
+    // get the ball moving in a random direction
     public void setRandomDx() {
         double range = Math.random()*(2) -1;
         if(range < 0)

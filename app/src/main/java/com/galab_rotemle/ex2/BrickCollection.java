@@ -23,8 +23,6 @@ public class BrickCollection {
         this.bricks_cols = bricks_cols;
         this.bricks_rows = bricks_rows;
 
-//        this.columns = (int)(Math.random()*(MAX_ROWS+1-MIN_ROWS))+MIN_ROWS;
-//        this.rows = (int)(Math.random()*(MAX_COLUMNS+1-MIN_COLUMNS))+MIN_COLUMNS;
         this.bricks = new Brick[bricks_rows][bricks_cols];
         this.numberOfBricks = this.bricks_rows * this.bricks_cols;
 
