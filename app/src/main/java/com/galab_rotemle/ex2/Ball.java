@@ -58,7 +58,7 @@ public class Ball {
             range = -1;
         else
             range = 1;
-        this.dx = ((int)(Math.random()*(15))+8) * (float)range;
+        this.dx = ((int)(Math.random()*(14))+8) * (float)range;
     }
 
     public boolean inBallRange(float x, float y) {

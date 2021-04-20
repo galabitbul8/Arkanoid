@@ -256,8 +256,8 @@ public class GameView extends View {
                         && !bricks.getBrick()[i][j].isBroke()) {
 
                     if((bricks.getBrick()[i][j].getX2() < ball.getxCenter() || bricks.getBrick()[i][j].getX1() > ball.getxCenter())
-                            && ((bricks.getBrick()[i][j].getY2() -10 < ball.getyCenter() - ball.getRadius())
-                            || (bricks.getBrick()[i][j].getY1() +10 > ball.getyCenter() + ball.getRadius()))) {
+                            && ((bricks.getBrick()[i][j].getY2() -8 < ball.getyCenter() - ball.getRadius())
+                            || (bricks.getBrick()[i][j].getY1() +8 > ball.getyCenter() + ball.getRadius()))) {
 
                         if(!(ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY2())
                                 || ball.inBallRange(bricks.getBrick()[i][j].getX1(), bricks.getBrick()[i][j].getY1())
@@ -268,8 +268,8 @@ public class GameView extends View {
                     }
                     Log.d("test", "didTouchBrick: Y2: " + bricks.getBrick()[i][j].getY2() + " Y1: "+ bricks.getBrick()[i][j].getY1() + " ball "+ this.ball.getyCenter());
                     if((bricks.getBrick()[i][j].getY2() < ball.getyCenter() || bricks.getBrick()[i][j].getY1() > ball.getyCenter())
-                            && ((bricks.getBrick()[i][j].getX2() -10 < ball.getxCenter() - ball.getRadius())
-                            || (bricks.getBrick()[i][j].getX1() +10 > ball.getxCenter() + ball.getRadius()))) {
+                            && ((bricks.getBrick()[i][j].getX2() -8 < ball.getxCenter() - ball.getRadius())
+                            || (bricks.getBrick()[i][j].getX1() +8 > ball.getxCenter() + ball.getRadius()))) {
                         Log.d("rotemLog", "didTouchBrickX: ");
 
                         if(!(ball.inBallRange(bricks.getBrick()[i][j].getX2(), bricks.getBrick()[i][j].getY2())
@@ -293,7 +293,7 @@ public class GameView extends View {
                         prepareNewGame();
                         return;
                     }
-                    // TODO: fix diagonal hit ( when the ball is on the edge)
+
                     if(ball.getyCenter() + ball.getRadius()  < bricks.getBrick()[i][j].getY1() +10 || ball.getyCenter() -ball.getRadius() > bricks.getBrick()[i][j].getY2() -10
                     || (ball.getDx() > 0 && ball.getxCenter() > (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)
                     || (ball.getDx() < 0 && ball.getxCenter() < (bricks.getBrick()[i][j].getX1() + bricks.getBrick()[i][j].getX1())/2)){

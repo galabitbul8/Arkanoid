@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         notificationsSetup();
         broadcastSetup();
         gameView = (GameView)findViewById(R.id.game);
-        mp = MediaPlayer.create(this, R.raw.hitsound);
+        mp = MediaPlayer.create(this, R.raw.hit_sound2);
         gameView.setSound(mp);
     }
 
